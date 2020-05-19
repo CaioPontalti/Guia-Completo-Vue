@@ -1,0 +1,28 @@
+<meta  charset="UTF-8">
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<div id="app">
+
+    <ul>
+        <li>azul</li>
+        <li>vermelho</li>
+        <li>verde</li>
+        <li>brancon</li>
+    </ul>
+
+    
+    <ul>
+        <li v-for="cor in cores" :key="cor" >{{ cor }}</li>
+    </ul>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data:{
+            cores:[
+                'azul', 'vermelho', 'verde', 'brancon'
+            ]
+        }
+    })
+</script>

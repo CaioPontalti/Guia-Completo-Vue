@@ -1,0 +1,26 @@
+<meta  charset="UTF-8">
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<div id="app">
+ 
+    <ul>
+        <li v-for="pessoa in pessoas">
+            <div v-for="(valor, chave, index) in pessoa" :key="valor">
+                {{ index }} - {{ chave }}: {{ valor }}
+            </div>
+        </li>        
+    </ul>
+
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data:{
+            pessoas:[
+               {nome:'Ana', idade:28, peso:100},
+               {nome:'Diego', idade:50, peso:30}
+            ]
+        }
+    })
+</script>
