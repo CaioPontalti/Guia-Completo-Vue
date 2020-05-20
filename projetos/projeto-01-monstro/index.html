@@ -42,9 +42,9 @@
 
             <div class="panel buttons">
                 <template v-if="running">
-                    <button class="btn attack" @click="attack">Ataque</button>
-                    <button class="btn especial-attack" @click="attack">Ataque Especial</button>
-                    <button class="btn heal">Curar</button>
+                    <button class="btn attack" @click="attack(false)">Ataque</button>
+                    <button class="btn especial-attack" @click="attack(true)">Ataque Especial</button>
+                    <button class="btn heal" @click="healAndHurt">Curar</button>
                     <button class="btn give-up" @click="scape">Desistir</button>
                 </template> 
                 <button v-else class="btn new-game" 
@@ -52,9 +52,15 @@
                 </button>
             </div>
 
-            <div class="panel logs"></div>
-        </div>
+            <div v-if="log.length" class="panel logs">
+                <ul>
+                    <li v-for="item in log" class="log" :class="item.cls">
+                        {{ item.text }}
+                    </li>
+                </ul>
+            </div>
 
+        </div>
     </div>
 
     <script src="app.js"></script>

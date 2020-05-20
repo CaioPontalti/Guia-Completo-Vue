@@ -1,9 +1,10 @@
 new Vue({
     el:'#app',
     data:{
-        playerLife: 15,
-        monsterLife: 0,
-        running: false
+        playerLife: 50,
+        monsterLife: 50,
+        running: false,
+        log:[]
     },
     computed:{
         hasResult(){
@@ -15,24 +16,42 @@ new Vue({
             this.running = true;
             this.playerLife = 100;
             this.monsterLife = 100;
+            this.log = [];
         },
         scape(){
             this.running = false;
             this.playerLife = 100;
             this.monsterLife = 100;
+            this.log = [];
         },
         attack(especial){
-            this.hurt('monsterLife', 5, 10, especial);
-            this.hurt('playerLife', 7, 12, false);
+            this.hurt('monsterLife', 5, 10, especial, 'Jogador', 'Monstro', 'player');
+            
+            if (this.monsterLife > 0) {
+                this.hurt('playerLife', 7, 12, false, 'Monstro', 'Jogador', 'monster');
+            }
         },
-        hurt(prop, min, max, especial){
+        hurt(prop, min, max, especial, source, target, cls){
             const plus = especial ? 5: 0;
             const hurl = this.getRandom(min + plus, max + plus);
             this[prop] = Math.max(this[prop] - hurl, 0);
+            this.registerLog(`${source} atingiu ${target} com ${hurl}.`, cls)
+        },
+        heal(min, max){
+            const heal = this.getRandom(min, max);
+            this.playerLife = Math.min(this.playerLife + heal, 100);
+            this.registerLog(`Jogador ganhou força de ${real}.`, 'player')
+        },
+        healAndHurt(){
+            this.heal(10,15);
+            this.hurt(7, 12, false, 'Monstro', 'Jogador', 'monster');
         },
         getRandom(min, max){
             const value = Math.random() * (max - min) + min
             return Math.round(value);
+        },
+        registerLog(text, cls){
+            this.log.unshift({ text, cls });
         }
     },
     watch:{
