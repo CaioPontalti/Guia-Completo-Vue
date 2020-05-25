@@ -46,36 +46,84 @@
 
 			@before-leave="beforeLeave"
 			@leave="leave"
-			@afterleave="afterLeave"
+			@after-leave="afterLeave"
 			@leave-cancelled="leaveCancelled"
 		>
 			<div class="caixa" v-if="exibir2"></div>
 		</transition>
+
+		<hr>
+
+		<div class="mb-4">
+			<b-button variant="primary" class="mr-2" 
+				@click="componenteSelecionado='AlertaInfo'"
+			> Info
+			</b-button>
+		
+			<b-button variant="secondary" 
+				@click="componenteSelecionado='AlertaAdvertencia'"
+			>Advertencia
+			</b-button>
+
+		</div>
+
+		<transition name="fade" mode="out-in">
+			<component :is="componenteSelecionado"></component>
+		</transition>
+		
+		<hr>
+
+
+		<button @click="adicionarAluno" class="mb-4">Adicionar Alunos</button>
+
+		<transition-group name="slide">
+			<b-list-group v-for="(aluno, indice) in alunos" :key="aluno">
+				<b-list-group-item @click="removerAluno(indice)" 
+									class="b-list-group-item">
+						{{ aluno }}
+				</b-list-group-item>
+			</b-list-group>
+		</transition-group>
+		
+
 
 	</div>
 </template>
 
 <script>
 
+import AlertaAdvertencia from './AlertaAdvertencia.vue'
+import AlertaInfo from './AlertaInfo.vue'
+
+
 export default {
+	components:{
+		AlertaAdvertencia, AlertaInfo
+	},
 	data(){
 		return{
 			msg:'Mensagem a ser mostrada ao usuário',
 			exibir: false,
 			tipoAnimacao:'',
 			exibir2:false,
-			larguraBase:0
+			larguraBase:0,
+			componenteSelecionado: 'AlertaInfo',
+			alunos:['Caio', 'Douglas', 'Mula', 'Burro']
 		}
 	},
 	methods:{
-		beforeEnter(el){
-			this.larguraBase = 0
-			el.style.width = `${this.larguraBase}px`
+		adicionarAluno(){
+			const a = Math.random().toString(36).substring(2);
+			this.alunos.push(a);
 		},
-		enter(el, done){
+		removerAluno(indice){
+			this.alunos.splice(indice, 1);
+		},
+		animar(el, done, negativo){
 			let rodada = 1
+
 			const temporizador = setInterval(() => {
-				const novaLargura = this.larguraBase + rodada * 10
+				const novaLargura = this.larguraBase + (negativo ? - rodada * 10 : rodada * 10)
 				el.style.width = `${novaLargura}px`
 				rodada++
 				if (rodada > 30) {
@@ -84,38 +132,39 @@ export default {
 				}
 			}, 20);
 		},
-		afterEnter(el){
 
-		},
-		enterCancelled(){
 
+		beforeEnter(el){
+			this.larguraBase = 0
+			el.style.width = `${this.larguraBase}px`
 		},
+		enter(el, done){
+			this.animar(el, done, false)
+		},
+		// afterEnter(el){
+
+		// },
+		// enterCancelled(){
+
+		// },
 		
 		beforeLeave(el){
 			this.larguraBase = 300
 			el.style.width = `${this.larguraBase}px`
 		},
 		leave(el, done){
-			let rodada = 1
-			const temporizador = setInterval(() => {
-				const novaLargura = this.larguraBase - rodada * 10
-				el.style.width = `${novaLargura}px`
-				rodada++
-				if (rodada > 30) {
-					clearInterval(temporizador)
-					done()
-				}
-			}, 20);
-		},
-		afterLeave(el){
-
-		},
-		leaveCancelled(){
-
+			this.animar(el, done, true)
 		}
-	}
+		// afterLeave(el){
+			
+		// },
+		// leaveCancelled(){
 
+		// }
+	}
 }
+
+
 </script>
 
 <style>
@@ -160,12 +209,22 @@ export default {
 }
 
 .slide-leave-active{
+	position: absolute;
+	width: 100%;
 	animation: slide-out 2s ease;
 	transition: opacity 2s;
 }
 
 .slide-enter, .slide_leave-to{
 	opacity: 0;
+}
+
+.slide-move{
+	transition: transform 1s;
+}
+
+.b-list-group-item {
+	cursor:pointer
 }
 
 </style>
