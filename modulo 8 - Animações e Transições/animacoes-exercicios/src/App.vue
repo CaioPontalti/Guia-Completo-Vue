@@ -9,12 +9,47 @@
 			Mostrar Mensagem	
 		</b-button>
 
-		<transition name="fade" appear>
+		<!-- <transition name="fade" appear>
 			<b-alert variant="info" show v-if="exibir">{{ msg }}</b-alert>
 		</transition>
 		
 		<transition name="slide" appear>
 			<b-alert variant="info" show v-show="exibir">{{ msg }}</b-alert>
+		</transition>
+
+		<transition enter-active-class="animated bounce" leave-active-class="animated shake">
+			<b-alert variant="info" show v-show="exibir">{{ msg }}</b-alert>
+		</transition> -->
+
+		<hr>
+
+		<b-select v-model="tipoAnimacao" class="mb-4">
+			<option value="fade">Fade</option>
+			<option value="slide">Slide</option>
+		</b-select>
+
+		<transition :name="tipoAnimacao">
+			<b-alert variant="info" show v-if="exibir" key="info">{{ msg }}</b-alert>
+			<b-alert variant="warning" show v-else key="warning">{{ msg }}</b-alert>
+		</transition>
+
+		<hr>
+
+		<button @click="exibir2 = !exibir2">Alternar</button>
+
+		<transition
+			:css="false"
+			@before-enter="beforeEnter"
+			@enter="enter"
+			@after-enter="afterEnter"
+			@enter-cancelled="enterCancelled"
+
+			@before-leave="beforeLeave"
+			@leave="leave"
+			@afterleave="afterLeave"
+			@leave-cancelled="leaveCancelled"
+		>
+			<div class="caixa" v-if="exibir2"></div>
 		</transition>
 
 	</div>
@@ -26,7 +61,57 @@ export default {
 	data(){
 		return{
 			msg:'Mensagem a ser mostrada ao usuário',
-			exibir: true
+			exibir: false,
+			tipoAnimacao:'',
+			exibir2:false,
+			larguraBase:0
+		}
+	},
+	methods:{
+		beforeEnter(el){
+			this.larguraBase = 0
+			el.style.width = `${this.larguraBase}px`
+		},
+		enter(el, done){
+			let rodada = 1
+			const temporizador = setInterval(() => {
+				const novaLargura = this.larguraBase + rodada * 10
+				el.style.width = `${novaLargura}px`
+				rodada++
+				if (rodada > 30) {
+					clearInterval(temporizador)
+					done()
+				}
+			}, 20);
+		},
+		afterEnter(el){
+
+		},
+		enterCancelled(){
+
+		},
+		
+		beforeLeave(el){
+			this.larguraBase = 300
+			el.style.width = `${this.larguraBase}px`
+		},
+		leave(el, done){
+			let rodada = 1
+			const temporizador = setInterval(() => {
+				const novaLargura = this.larguraBase - rodada * 10
+				el.style.width = `${novaLargura}px`
+				rodada++
+				if (rodada > 30) {
+					clearInterval(temporizador)
+					done()
+				}
+			}, 20);
+		},
+		afterLeave(el){
+
+		},
+		leaveCancelled(){
+
 		}
 	}
 
@@ -42,6 +127,13 @@ export default {
 	color: #2c3e50;
 	margin-top: 60px;
 	font-size: 1.5rem;
+}
+
+.caixa{
+	height: 100px;
+	width: 300px;
+	margin: 30px auto;
+	background-color: lightgreen;
 }
 
 .fade-enter, .fade_leave-to{
