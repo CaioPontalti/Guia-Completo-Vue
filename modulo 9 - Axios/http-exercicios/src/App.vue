@@ -77,6 +77,7 @@ export default {
 				})
 			})
 		},
+		
 		salvar(){
 			if (!this.id) {
 				this.$http.post('usuarios.json', this.usuario)
